@@ -1,0 +1,12 @@
+{
+  "extends": "@vue/tsconfig/tsconfig.dom.json",
+  "include": ["src-ui/**/*", "src-ui/**/*.vue"],
+  "exclude": ["src-ui/**/__tests__/*"],
+  "compilerOptions": {
+    "composite": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src-ui/*"]
+    }
+  }
+}
