@@ -1,4 +1,9 @@
 html {
-  overflow-y: unset !important;
   user-select: none;
+  overflow-y: hidden !important;
+}
+
+.v-container {
+  max-height: calc(100vh - 112px);
+  overflow-y: auto;
 }
