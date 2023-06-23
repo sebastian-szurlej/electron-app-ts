@@ -1,90 +1,97 @@
 <template>
-  <div id="container">
-    <div class="area">
-      <div class="rectangle"></div>
-      <div class="circle"></div>
-      <div class="text-area">
-        <h1>Example line of text</h1>
-      </div>
+  <div class="menu-position pa-2 d-flex">
+    <v-btn density="compact" variant="text" icon="mdi-magnify-plus"></v-btn>
+    <v-spacer></v-spacer>
+    <v-btn density="compact" variant="text" icon="mdi-arrow-expand-all" @click="resetView"></v-btn>
+  </div>
+  <div id="canva-container" class="container height">
+    <div id="canva" class="zoom-area">
+      <v-img src="@/assets/test-2.jpeg"></v-img>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { onMounted } from 'vue'
-import { renderer } from '@/pages/PageTwo/zooming'
+import { ZoomPan } from '@/helpers/ZoomPan'
+
+let zoomPan: ZoomPan
 
 onMounted(() => {
-  const container = document.getElementById('container')
-  const instance = renderer({
+  const container = document.getElementById('canva-container')!
+  zoomPan = new ZoomPan({
     minScale: 0.1,
     maxScale: 30,
-    element: container.children[0],
-    scaleSensitivity: 50
+    element: document.getElementById('canva')!,
+    scaleSensitivity: 50,
+    translateSensitivity: 10
   })
   container.addEventListener('wheel', (event) => {
+    event.preventDefault()
     if (!event.ctrlKey) {
+      zoomPan.panY({
+        originY: event.deltaY
+      })
+    } else {
+      zoomPan.zoomInOut({
+        deltaScale: Math.sign(event.deltaY) > 0 ? 1 : -1,
+        x: event.pageX,
+        y: event.pageY
+      })
+    }
+  })
+  container.addEventListener('mousedown', (event) => {
+    if (event.button !== 1) {
       return
     }
     event.preventDefault()
-    instance.zoom({
-      deltaScale: Math.sign(event.deltaY) > 0 ? 1 : -1,
-      x: event.pageX,
-      y: event.pageY
-    })
+    container.addEventListener('mousemove', moveMouse)
   })
-  container.addEventListener('dblclick', () => {
-    instance.panTo({
-      originX: 0,
-      originY: 0,
-      scale: 1
-    })
-  })
-  container.addEventListener('mousemove', (event) => {
-    if (!event.shiftKey) {
+  container.addEventListener('mouseup', (event) => {
+    if (event.button !== 1) {
       return
     }
     event.preventDefault()
-    instance.panBy({
-      originX: event.movementX,
-      originY: event.movementY
-    })
+    container.removeEventListener('mousemove', moveMouse)
   })
 })
+
+const resetView = () => {
+  zoomPan.panTo({
+    scale: 1,
+    originX: 0,
+    originY: 0
+  })
+}
+
+const moveMouse = (event: MouseEvent) => {
+  console.log(event.movementX)
+  zoomPan.panBy({
+    originX: event.movementX,
+    originY: event.movementY
+  })
+}
 </script>
 
 <style scoped>
-#container {
-  height: 100%;
-  width: 100%;
+.container {
+  background-color: #bdbdbd;
+}
+
+.menu-position {
+  gap: 2px;
   position: absolute;
+  right: 0;
+  z-index: 1;
 }
 
-.area {
-  border: 1px dashed black;
-  height: 80%;
-  width: 80%;
-  position: absolute;
-}
-
-.circle {
-  height: 200px;
-  width: 200px;
-  background-color: navajowhite;
-  border-radius: 50%;
-  display: inline-block;
+.zoom-area {
+  image-rendering: pixelated;
   position: relative;
-}
-
-.rectangle {
-  background-color: navajowhite;
-  height: 150px;
-  width: 250px;
-  position: relative;
-}
-
-.text-area {
-  float: right;
-  position: relative;
+  height: 300px;
+  width: 400px;
+  left: 50px;
+  top: 50px;
+  background-color: #ffffff;
 }
 </style>

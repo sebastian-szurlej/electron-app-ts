@@ -4,6 +4,15 @@ html {
 }
 
 .v-container {
+  padding: 0 !important;
+  height: 100%;
   max-height: calc(100vh - 112px);
+}
+
+.height {
+  height: 100%;
+}
+
+.scroll {
   overflow-y: auto;
 }

@@ -9,7 +9,7 @@
     <!-- Sizes your content based upon application components -->
     <v-main>
       <!-- Provides the application the proper gutter -->
-      <v-container fluid>
+      <v-container :fluid="true" class="container-size">
         <!-- If using vue-router -->
         <router-view></router-view>
       </v-container>
@@ -23,4 +23,8 @@ import AppFooter from '@/layouts/AppFooter.vue'
 import AppSidebar from '@/layouts/AppSidebar.vue'
 </script>
 
-<style src="./assets/global.css"></style>
+<style src="./assets/global.css">
+/* .container-size {
+  height: 100% !important;
+} */
+</style>
